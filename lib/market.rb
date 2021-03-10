@@ -1,10 +1,16 @@
 class Market
   attr_reader :name,
-              :vendors
+              :vendors,
+              :time_date
 
   def initialize(name)
     @name = name
     @vendors = []
+    @time_date = Time.now
+  end
+
+  def sorted_item_list
+    sorted_items.map(&:name)
   end
 
   def add_vendor(vendor)
@@ -25,14 +31,14 @@ class Market
     vendors.sum { |vendor| vendor.check_stock(item) }
   end
 
-  def sorted_item_list
+  def sorted_items
     vendors.flat_map { |vendor| vendor.inventory.keys }.uniq
            .sort_by(&:name)
   end
 
   def total_inventory
     total_inventory = {}
-    sorted_item_list.each do |item|
+    sorted_items.each do |item|
       total_inventory[item] = {
         quantity: quantity_of_item_listed(item),
         vendors: vendors_that_sell(item) }
@@ -41,9 +47,12 @@ class Market
   end
 
   def overstocked_items
-    sorted_item_list.find_all do |item|
+    sorted_items.find_all do |item|
       quantity_of_item_listed(item) > 50 && vendors_that_sell(item).length > 1
     end.uniq
+  end
+
+  def date
   end
 
 end

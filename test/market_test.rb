@@ -88,7 +88,7 @@ class MarketTest < Minitest::Test
     market.add_vendor(vendor1)
     @vendor2.stock(@item1, 10)
 
-    assert_equal [@item1, item2], market.sorted_item_list
+    assert_equal [@item1, item2], market.sorted_items
   end
 
   def test_a_market_can_identify_overstocked_items
@@ -103,7 +103,31 @@ class MarketTest < Minitest::Test
     market.add_vendor(@vendor3)
 
     assert_equal [@item1], market.overstocked_items
-    assert_equal [@item4, @item1, @item3, @item2], market.sorted_item_list
+    assert_equal [@item4, @item1, @item3, @item2], market.sorted_items
+  end
+
+  def test_the_market_can_have_sorted_name_list_of_items
+    # skip
+    market = Market.new("South Pearl")
+    @vendor1.stock(@item1, 35)
+    @vendor1.stock(@item2, 7)
+    @vendor2.stock(@item4, 50)
+    @vendor2.stock(@item3, 25)
+    @vendor3.stock(@item1, 65)
+    market.add_vendor(@vendor1)
+    market.add_vendor(@vendor2)
+    market.add_vendor(@vendor3)
+
+    expected = ["Banana Nice Cream", 'Peach', "Peach-Raspberry Nice Cream", 'Tomato']
+    assert_equal expected, market.sorted_item_list
+  end
+
+  def test_market_list_date_it_was_created
+    #ran out of time here
+    skip
+    market = Market.new("South Pearl")
+
+    assert_equal "24/02/2020", market.date
   end
 
 end
