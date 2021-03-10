@@ -9,17 +9,11 @@ class MarketTest < Minitest::Test
 
   def setup
     @vendor1 = Vendor.new("Rocky Mountain Fresh")
-
     @item1 = Item.new({name: 'Peach', price: "$0.75"})
-
     @item2 = Item.new({name: 'Tomato', price: "$0.50"})
-
     @item3 = Item.new({name: "Peach-Raspberry Nice Cream", price: "$5.30"})
-
     @item4 = Item.new({name: "Banana Nice Cream", price: "$4.25"})
-
     @vendor2 = Vendor.new("Ba-Nom-a-Nom")
-
     @vendor3 = Vendor.new("Palisade Peach Shack")
   end
   def test_it_exists
@@ -94,7 +88,22 @@ class MarketTest < Minitest::Test
     market.add_vendor(vendor1)
     @vendor2.stock(@item1, 10)
 
-    assert_equal [item2, @item1], market.items_being_sold
+    assert_equal [@item1, item2], market.sorted_item_list
+  end
+
+  def test_a_market_can_identify_overstocked_items
+    market = Market.new("South Pearl")
+    @vendor1.stock(@item1, 35)
+    @vendor1.stock(@item2, 7)
+    @vendor2.stock(@item4, 50)
+    @vendor2.stock(@item3, 25)
+    @vendor3.stock(@item1, 65)
+    market.add_vendor(@vendor1)
+    market.add_vendor(@vendor2)
+    market.add_vendor(@vendor3)
+
+    assert_equal [@item1], market.overstocked_items
+    assert_equal [@item4, @item1, @item3, @item2], market.sorted_item_list
   end
 
 end
